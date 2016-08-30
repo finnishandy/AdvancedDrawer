@@ -47,7 +47,7 @@ Reactotron.connect({ enabled: __DEV__ });
 class RoutingExample extends Component {
   render() {
     return (
-      <Router hideNavBar={true}>
+      <Router hideNavBar={true} sceneStyle={{paddingTop: 26}}>
         <Scene key="root">
           <Scene key="pageOne" component={PageOne} title="PageOne" initial={true} />
           <Scene key="pageTwo" component={PageTwo} title="PageTwo" />

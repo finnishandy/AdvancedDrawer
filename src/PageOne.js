@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Drawer from 'react-native-drawer';
 import PageTwo from './PageTwo';
@@ -9,44 +9,64 @@ class PageOne extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {panelOpen: true}
   }
+
+  closeControlPanel() {
+    this.refs._drawer.close()
+  }
+
+  openControlPanel() {
+    this.refs._drawer.open()
+  }
+
+  setStyles = () => {
+    this.setState({panelOpen: !this.state.panelOpen})
+  };
 
   render() {
     const goToPageTwo = () => Actions.pageTwo({text: 'Hello World!'});
-    const drawerStyles = {
-      drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3, paddingTop: 10, backgroundColor: 'red'},
-      main: {paddingLeft: 3},
-    };
-    let closeControlPanel = () => {
-      this.refs._drawer.close()
-    };
-    let openControlPanel = () => {
-      this.refs._drawer.open()
-    };
-    let boundClose = closeControlPanel.bind(this);
-
     return (
       <Drawer
       type="displace"
       ref="_drawer"
-      content={<PageTwo text="close me" close={closeControlPanel} flagger={this.props.flagger}/>}
+      content={<PageTwo text="close me" close={this.closeControlPanel} flagger={this.props.flagger}/>}
       openDrawerOffset={0.4} // 20% gap on the right side of drawer
       panCloseMask={0}
+      onOpen={this.setStyles}
+      onClose={this.setStyles}
       negotiatePan={true}
       panThreshold={0}
       closedDrawerOffset={30}
-      styles={drawerStyles}
+      styles={{ drawer: { backgroundColor: this.state.panelOpen ? 'lime' : 'tomato' } }}
       tweenHandler={(ratio) => ({
         main: { opacity:(2-ratio)/2 }
       })}>
         <View style={{margin: 128, backgroundColor: 'green'}}>
-          <Text onPress={openControlPanel}>This is { this.props.flagger ? 'bar' : 'foo'}</Text>
+          <Text onPress={this.openControlPanel}>This is { this.props.flagger ? 'bar' : 'foo'}</Text>
           <Text onPress={this.props.toggleBar}>OPEN DRAWER</Text>
         </View>
       </Drawer>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  closed: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    backgroundColor: 'red'
+  },
+  open: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    backgroundColor: 'orange'
+  },
+});
+
+
 
 function addTodo(text) {
   return {
@@ -66,11 +86,5 @@ function mapDispatchToProps(dispatch) {
     }
   };
 }
-/*
-function mapDispatchToProps(dispatch) {
-  return {
-    toggleBar: () => dispatch(() => { type: 'bar' }),
-  };
-}
-*/
+
 export default connect(mapStateToProps, mapDispatchToProps)(PageOne);
