@@ -1,15 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Drawer from 'react-native-drawer';
 import PageTwo from './PageTwo';
+import Orientation from 'react-native-orientation';
+
 
 class PageOne extends Component {
 
   constructor(props) {
     super(props);
     this.state = {panelOpen: true}
+  }
+
+  orientationDidChange() {
+    Orientation.getOrientation((err,orientation)=> {
+      console.log("Current Device Orientation: ", orientation);
+      var {height, width} = Dimensions.get('window');
+      console.log("Height and width:", height, width);
+    });
   }
 
   closeControlPanel() {
@@ -23,6 +33,10 @@ class PageOne extends Component {
   setStyles = () => {
     this.setState({panelOpen: !this.state.panelOpen})
   };
+
+  componentDidMount(){
+    Orientation.addOrientationListener(this.orientationDidChange);
+  }
 
   render() {
     const goToPageTwo = () => Actions.pageTwo({text: 'Hello World!'});
